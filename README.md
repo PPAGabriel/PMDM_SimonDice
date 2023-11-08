@@ -21,8 +21,7 @@ graph TD
 
 A[Inicio] --> B[Start/Reset]
 B-->C
-C[ColorEnviado
-Colores]-->D[+Color]
+C[ColorEnviado + Colores]-->D[+Color]
 D-->E
 E["Colores"]-->F[WaitColoresPulsados]
 F-->G
