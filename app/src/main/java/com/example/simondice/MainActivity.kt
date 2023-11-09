@@ -11,11 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.simondice.ui.theme.InterfazUsuario
+import com.example.simondice.ui.theme.UInterface
 import com.example.simondice.ui.theme.MyViewModel
 import com.example.simondice.ui.theme.SimonDiceTheme
+/**
+*Videogame of Simon Dice
+**/
 
-var name:String = "Android"
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +26,7 @@ class MainActivity : ComponentActivity() {
             SimonDiceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = Color(100,0,20)) {
-                    InterfazUsuario(miViewModel,name)
+                    UInterface(miViewModel)
                 }
             }
         }

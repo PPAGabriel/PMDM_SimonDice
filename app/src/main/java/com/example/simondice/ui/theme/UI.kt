@@ -12,52 +12,51 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.simondice.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 open class UI {
 }
 
 @Composable
-fun InterfazUsuario(miViewModel: MyViewModel,name: String, modifier: Modifier = Modifier) {
+fun UInterface(myViewModel: MyViewModel, modifier: Modifier = Modifier) {
 
-    var miColor= Color(220,122,255)
+    var myOwnColor= Color(220,122,255)
     Column {
         Column {
-            ronda(miViewModel,modifier = modifier,miColor=miColor)
+            round(myViewModel,modifier = modifier)
         }
 
-        colorBotones()
+        colorButtons()
 
         Row {
-            botonStart(miViewModel, miColor = miColor, modifier = modifier)
-            botonRound(miViewModel, miColor = miColor, modifier = modifier)
+            startButton(myViewModel, myColor = myOwnColor, modifier = modifier)
+            roundButton(myViewModel, myColor = myOwnColor, modifier = modifier)
         }
     }
 }
 
+// APP's Preview
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
     SimonDiceTheme {
-        InterfazUsuario(miViewModel=MyViewModel(), "prueba" )
+        UInterface(myViewModel=MyViewModel() )
     }
 }
+
+//APP's Functions
 @Composable()
-fun ronda(miViewModel: MyViewModel,modifier: Modifier,miColor: Color) {
+fun round(myViewModel: MyViewModel,modifier: Modifier) {
     Text(
         text = "Ronda:",
         modifier = modifier
@@ -67,16 +66,16 @@ fun ronda(miViewModel: MyViewModel,modifier: Modifier,miColor: Color) {
         color = Color.White
     )
 
-    if (miViewModel.getNumero2() > 10) {
+    if (myViewModel.getRound() > 10) {
         Text(
-            text = "${miViewModel.getNumero2()}",
+            text = "${myViewModel.getRound()}",
             fontSize = 60.sp,
             modifier = Modifier.padding(300.dp,0.dp,0.dp,0.dp),
             color = Color.White
         )
     } else {
         Text(
-            text = "${miViewModel.getNumero2()}",
+            text = "${myViewModel.getRound()}",
             fontSize = 40.sp,
             modifier = Modifier.padding(300.dp,0.dp,0.dp,0.dp),
             color = Color.White
@@ -84,19 +83,19 @@ fun ronda(miViewModel: MyViewModel,modifier: Modifier,miColor: Color) {
     }
 }
 @Composable
-fun botonStart(miViewModel: MyViewModel,miColor: Color,modifier: Modifier){
+fun startButton(myViewModel: MyViewModel,myColor: Color,modifier: Modifier){
     Button(
         onClick = {
-            miViewModel.cambiarEstado()
+            myViewModel.changeStatus()
         },
-        modifier= Modifier
+        modifier= modifier
             .height(90.dp)
             .width(160.dp)
             .padding(35.dp,0.dp,0.dp,0.dp),
-        colors= ButtonDefaults.buttonColors(miColor)
+        colors= ButtonDefaults.buttonColors(myColor)
     ) {
         Text(
-            text = miViewModel.getNombre2(),
+            text = myViewModel.getStatus(),
             textAlign = TextAlign.Center,
             fontSize = 20.sp,
             color = Color.White
@@ -104,17 +103,17 @@ fun botonStart(miViewModel: MyViewModel,miColor: Color,modifier: Modifier){
     }
 }
 @Composable
-fun botonRound(miViewModel: MyViewModel,miColor: Color,modifier: Modifier){
+fun roundButton(myViewModel: MyViewModel,myColor: Color,modifier: Modifier){
     Button(
         onClick = {
-            miViewModel.aumentoN()
+            myViewModel.incrementN()
             Log.d("Funciones","Click!!!!!")
         },
         modifier= Modifier
             .height(90.dp)
             .width(160.dp)
             .padding(70.dp, 0.dp, 0.dp, 0.dp),
-        colors= ButtonDefaults.buttonColors(miColor)
+        colors= ButtonDefaults.buttonColors(myColor)
     ) {
         Image(
             painter = painterResource(R.drawable.arrow),
@@ -125,7 +124,7 @@ fun botonRound(miViewModel: MyViewModel,miColor: Color,modifier: Modifier){
 }
 
 @Composable
-fun colorBotones(){
+fun colorButtons(){
     Row (
         modifier = Modifier.padding(0.dp,100.dp,0.dp,0.dp)){
         configColorButton(color = Color.Cyan)
