@@ -47,3 +47,4 @@ A[START]-->B[SECUENCIA]
 E-->|SÍ|B
 E-->|NO|F[PERDER]-->A
 ```
+
