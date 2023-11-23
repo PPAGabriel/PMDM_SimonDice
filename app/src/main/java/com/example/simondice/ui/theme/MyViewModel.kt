@@ -21,9 +21,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import com.example.simondice.Colors
 import com.example.simondice.Data
 import com.example.simondice.R
 import com.example.simondice.State
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 /**
  * ViewModel of the game
@@ -50,9 +55,9 @@ class MyViewModel():ViewModel() {
     }
 
     /**
-     * Initialize the game
+     * Restart the game
      */
-    fun initializeGame() {
+    fun restartGame() {
         restartRound()
         restartSequence()
         restartUserSequence()
@@ -60,22 +65,74 @@ class MyViewModel():ViewModel() {
     }
 
     /**
+     * Restart the round
+     */
+    fun restartRound() {
+        Data.round = 0
+    }
+
+    /**
+     * Restart the sequence
+     */
+    fun restartSequence() {
+        Data.sequence = mutableListOf()
+        Colors.GREEN.color.value = Color.Green
+        Colors.RED.color.value = Color.Red
+        Colors.BLUE.color.value = Color.Blue
+        Colors.YELLOW.color.value = Color.Yellow
+    }
+
+    /**
+     * Restart the user sequence
+     */
+    fun restartUserSequence() {
+        Data.userSequence = mutableListOf()
+    }
+
+    /**
      * Increase the sequence of colors
      */
-    fun increaseSequence() {
+    fun increaseSequence() = runBlocking{
         Data.state = State.SEQUENCE
         addColorToSequence()
         showSequence()
         Data.state= State.WAITING
     }
 
-
+    /**
+     * Add a color to the sequence
+     */
+    fun addColorToSequence() {
+        Data.sequence.add(randomNumber(4))
+    }
 
     /**
      * Show the sequence of colors to the user
      */
-    fun showSequence() {
+
+    suspend fun showSequence()= coroutineScope {
         //TODO: Show the sequence of colors to the user
+        Log.d("Secuencia","${Data.sequence}")
+       launch {
+           for (i in Data.sequence) {
+               if (Data.numColors[i].equals(Colors.BLUE.color)) {
+                   Colors.BLUE.color.value = Color(255, 255, 255)
+               }
+               if (Data.numColors[i].equals(Colors.RED.color)) {
+                   Colors.RED.color.value = Color(255, 255, 255)
+               }
+               if (Data.numColors[i].equals(Colors.YELLOW.color)) {
+                   Colors.YELLOW.color.value = Color(255, 255, 255)
+               }
+               if (Data.numColors[i].equals(Colors.GREEN.color)) {
+                   Colors.GREEN.color.value = Color(255, 255, 255)
+               }
+
+               delay(1000L)
+               
+           }
+       }
+
     }
 
     /**
@@ -105,36 +162,22 @@ class MyViewModel():ViewModel() {
     }
 
 
-    /**
-     * Restart the round
-     */
-    fun restartRound() {
-        Data.round = 0
-    }
-
-    /**
-     * Restart the sequence
-     */
-    fun restartSequence() {
-        Data.sequence = mutableListOf()
-    }
-
-    /**
-     * Restart the user sequence
-     */
-    fun restartUserSequence() {
-        Data.userSequence = mutableListOf()
-    }
-
-    /**
-     * Add a color to the sequence
-     */
-    fun addColorToSequence() {
-        Data.sequence.add(randomNumber(4))
-    }
-
-
     //////////////////////////////////////////
+
+    fun changeStatus(){
+        if (_statusC.value.equals("START")){
+            _statusC.value = "RESET"
+
+            increaseSequence()
+
+
+        } else {
+            _statusC.value = "START"
+
+            restartGame()
+
+        }
+    }
 
 
     fun incrementN(){
@@ -145,14 +188,6 @@ class MyViewModel():ViewModel() {
         return _round.value
     }
 
-    fun changeStatus(){
-        if (_statusC.value.equals("START")){
-            _statusC.value = "RESET"
-        } else {
-            _statusC.value = "START"
-
-        }
-    }
 
     fun getStatus():String{
         return _statusC.value

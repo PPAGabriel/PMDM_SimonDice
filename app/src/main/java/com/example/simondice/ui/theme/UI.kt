@@ -14,6 +14,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.simondice.Colors
 import com.example.simondice.R
 
 open class UI {
@@ -127,17 +129,17 @@ fun roundButton(myViewModel: MyViewModel,myColor: Color,modifier: Modifier){
 fun colorButtons(){
     Row (
         modifier = Modifier.padding(0.dp,100.dp,0.dp,0.dp)){
-        configColorButton(color = Color.Cyan)
-        configColorButton(color = Color.Green)
+        configColorButton(color = Colors.BLUE.color)
+        configColorButton(color = Colors.GREEN.color)
     }
     Row (){
-        configColorButton(color = Color.Red)
-        configColorButton(color = Color.Yellow)
+        configColorButton(color = Colors.RED.color)
+        configColorButton(color = Colors.YELLOW.color)
     }
 }
 
 @Composable
-fun configColorButton(color: Color){
+fun configColorButton(color: MutableState<Color>){
     Column {
         Button(
             shape = RectangleShape,
@@ -149,7 +151,7 @@ fun configColorButton(color: Color){
                 .width(200.dp)
                 .padding(50.dp, 50.dp)
             ,
-            colors = ButtonDefaults.buttonColors(color)
+            colors = ButtonDefaults.buttonColors(color.value)
         ){
 
         }

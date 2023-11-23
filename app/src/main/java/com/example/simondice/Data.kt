@@ -1,5 +1,9 @@
 package com.example.simondice
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
+
 /**
  * Class that contains the data of the game
  * @property round is the actual round of the game
@@ -13,6 +17,7 @@ object Data {
     var round: Int = 0
     var sequence = mutableListOf<Int>()
     var userSequence = mutableListOf<Int>()
+    var numColors= listOf(Colors.BLUE.color, Colors.GREEN.color, Colors.RED.color, Colors.YELLOW.color)
     var record: Int = 0
     var state: State = State.START
     
@@ -37,9 +42,9 @@ enum class State {
  * Enum class with the colors of the game
  */
 
-enum class Colors {
-    RED,
-    BLUE,
-    GREEN,
-    YELLOW
+enum class Colors(var color: MutableState<Color>) {
+    RED(mutableStateOf(Color.Red)),
+    BLUE(mutableStateOf(Color.Blue)),
+    GREEN(mutableStateOf(Color.Green)),
+    YELLOW(mutableStateOf(Color.Yellow))
 }
