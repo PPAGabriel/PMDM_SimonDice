@@ -2,7 +2,6 @@
 
 package com.example.simondice.ui.theme
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,25 +23,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.simondice.Colors
+import com.example.simondice.Data
 import com.example.simondice.R
+import com.example.simondice.State
 
 open class UI {
 }
 
 @Composable
-fun UInterface(myViewModel: MyViewModel, modifier: Modifier = Modifier) {
+fun UInterface(mVM: MyViewModel, modifier: Modifier = Modifier) {
 
     var myOwnColor= Color(220,122,255)
+
     Column {
         Column {
-            round(myViewModel,modifier = modifier)
+            gameInfo(mVM,modifier = modifier)
         }
 
-        colorButtons()
+        colorButtons(mVM)
 
         Row {
-            startButton(myViewModel, myColor = myOwnColor, modifier = modifier)
-            roundButton(myViewModel, myColor = myOwnColor, modifier = modifier)
+            startButton(mVM, myColor = myOwnColor, modifier = modifier)
+            sendButton(mVM, myColor = myOwnColor, modifier = modifier)
         }
     }
 }
@@ -52,38 +54,50 @@ fun UInterface(myViewModel: MyViewModel, modifier: Modifier = Modifier) {
 @Composable
 fun Preview() {
     SimonDiceTheme {
-        UInterface(myViewModel=MyViewModel() )
+        UInterface(mVM=MyViewModel() )
     }
 }
 
 //APP's Functions
 @Composable()
-fun round(myViewModel: MyViewModel,modifier: Modifier) {
-    Text(
-        text = "Ronda:",
-        modifier = modifier
-            .padding(250.dp,0.dp,0.dp,0.dp),
-        textAlign = TextAlign.Right,
-        fontSize = 40.sp,
-        color = Color.White
-    )
+fun gameInfo(myViewModel: MyViewModel,modifier: Modifier) {
 
-    if (myViewModel.getRound() > 10) {
-        Text(
-            text = "${myViewModel.getRound()}",
-            fontSize = 60.sp,
-            modifier = Modifier.padding(300.dp,0.dp,0.dp,0.dp),
-            color = Color.White
-        )
-    } else {
-        Text(
-            text = "${myViewModel.getRound()}",
-            fontSize = 40.sp,
-            modifier = Modifier.padding(300.dp,0.dp,0.dp,0.dp),
-            color = Color.White
-        )
+    Row {
+        Column {
+            Text(
+                text = "Record:",
+                modifier = modifier
+                    .padding(10.dp,20.dp,0.dp,0.dp),
+                textAlign = TextAlign.Left,
+                fontSize = 40.sp,
+                color = Color.White
+            )
+            Text(
+                text = "${myViewModel.getRecord()}",
+                fontSize = 40.sp,
+                modifier = Modifier.padding(50.dp,10.dp,0.dp,0.dp),
+                color = Color.White
+            )
+        }
+        Column {
+            Text(
+                text = "Ronda:",
+                modifier = modifier
+                    .padding(70.dp,20.dp,0.dp,0.dp),
+                fontSize = 40.sp,
+                color = Color.White
+            )
+            Text(
+                text = "${myViewModel.getRound()}",
+                fontSize = 40.sp,
+                modifier = Modifier.padding(100.dp,10.dp,0.dp,0.dp),
+                color = Color.White
+            )
+        }
     }
-}
+
+    }
+
 @Composable
 fun startButton(myViewModel: MyViewModel,myColor: Color,modifier: Modifier){
     Button(
@@ -93,23 +107,26 @@ fun startButton(myViewModel: MyViewModel,myColor: Color,modifier: Modifier){
         modifier= modifier
             .height(90.dp)
             .width(160.dp)
-            .padding(35.dp,0.dp,0.dp,0.dp),
+            .padding(35.dp, 0.dp, 0.dp, 0.dp),
         colors= ButtonDefaults.buttonColors(myColor)
     ) {
         Text(
             text = myViewModel.getStatus(),
             textAlign = TextAlign.Center,
-            fontSize = 20.sp,
+            fontSize = 18.sp,
             color = Color.White
         )
     }
 }
 @Composable
-fun roundButton(myViewModel: MyViewModel,myColor: Color,modifier: Modifier){
+fun sendButton(myViewModel: MyViewModel,myColor: Color,modifier: Modifier){
     Button(
         onClick = {
-            myViewModel.incrementN()
-            Log.d("Funciones","Click!!!!!")
+            if (myViewModel.getStatus()=="START"){
+                //Nothing changes
+            }else{
+                myViewModel.checkUserSequence()
+            }
         },
         modifier= Modifier
             .height(90.dp)
@@ -126,25 +143,27 @@ fun roundButton(myViewModel: MyViewModel,myColor: Color,modifier: Modifier){
 }
 
 @Composable
-fun colorButtons(){
+fun colorButtons(myViewModel: MyViewModel){
     Row (
         modifier = Modifier.padding(0.dp,100.dp,0.dp,0.dp)){
-        configColorButton(color = Colors.BLUE.color)
-        configColorButton(color = Colors.GREEN.color)
+        designColorButton(color = Colors.RED.color,myViewModel)
+        designColorButton(color = Colors.BLUE.color,myViewModel)
     }
     Row (){
-        configColorButton(color = Colors.RED.color)
-        configColorButton(color = Colors.YELLOW.color)
+        designColorButton(color = Colors.YELLOW.color,myViewModel)
+        designColorButton(color = Colors.GREEN.color,myViewModel)
     }
 }
 
 @Composable
-fun configColorButton(color: MutableState<Color>){
+fun designColorButton(color: MutableState<Color>, mVM: MyViewModel){
     Column {
         Button(
             shape = RectangleShape,
             onClick = {
-                /*TODO*/
+                if (Data.state !=State.SEQUENCE){
+                    mVM.incrementUserSequence(Data.colors.indexOf(color))
+                }
             },
             modifier = Modifier
                 .height(200.dp)

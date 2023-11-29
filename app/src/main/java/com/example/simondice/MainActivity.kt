@@ -1,12 +1,11 @@
 package com.example.simondice
 
+import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,16 +18,34 @@ import com.example.simondice.ui.theme.SimonDiceTheme
 **/
 
 class MainActivity : ComponentActivity() {
+
+    // APP's Variables
+    private var mediaPlayer: MediaPlayer? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val miViewModel: MyViewModel = MyViewModel()
+        val mVM: MyViewModel = MyViewModel()
         setContent {
             SimonDiceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = Color(100,0,20)) {
-                    UInterface(miViewModel)
+
+                    UInterface(mVM)
+
+                    // Music
+                    mediaPlayer = MediaPlayer.create(this, R.raw.music)
+                    mediaPlayer?.start()
+                    mediaPlayer?.isLooping = true
                 }
             }
         }
+    }
+}
+
+// APP's Preview
+@Preview(showBackground = true)
+@Composable
+fun Preview() {
+    SimonDiceTheme {
+        UInterface(mVM=MyViewModel() )
     }
 }

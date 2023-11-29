@@ -1,31 +1,11 @@
 package com.example.simondice.ui.theme
 
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
-import com.example.simondice.Colors
+import androidx.lifecycle.viewModelScope
 import com.example.simondice.Data
-import com.example.simondice.R
 import com.example.simondice.State
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -33,12 +13,8 @@ import kotlinx.coroutines.runBlocking
 /**
  * ViewModel of the game
  */
-
 class MyViewModel():ViewModel() {
-    private val TAG_LOG: String="Mensaje de ViewModel"
-
-    var _round= mutableStateOf(0)
-    var _statusC= mutableStateOf("START")
+    private val TAG_LOG: String="MVM"
 
     init{
         Log.d(TAG_LOG,"Inicializamos ViewModel")
@@ -68,256 +44,145 @@ class MyViewModel():ViewModel() {
      * Restart the round
      */
     fun restartRound() {
-        Data.round = 0
+        Data.round.value = 0
     }
 
     /**
      * Restart the sequence
      */
     fun restartSequence() {
-        Data.sequence = mutableListOf()
-        Colors.GREEN.color.value = Color.Green
-        Colors.RED.color.value = Color.Red
-        Colors.BLUE.color.value = Color.Blue
-        Colors.YELLOW.color.value = Color.Yellow
+        Data.sequence.clear()
     }
 
     /**
      * Restart the user sequence
      */
     fun restartUserSequence() {
-        Data.userSequence = mutableListOf()
+        Data.userSequence.clear()
     }
 
     /**
-     * Increase the sequence of colors
+     * Increment the sequence and show it
      */
-    fun increaseSequence() = runBlocking{
+    fun incrementSequence(time: Long) {
         Data.state = State.SEQUENCE
-        addColorToSequence()
-        showSequence()
-        Data.state= State.WAITING
-    }
-
-    /**
-     * Add a color to the sequence
-     */
-    fun addColorToSequence() {
+        Log.d(TAG_LOG,Data.state.toString())
         Data.sequence.add(randomNumber(4))
+        showSequenceRun(time)
     }
 
     /**
-     * Show the sequence of colors to the user
+     * Show the sequence
      */
 
-    suspend fun showSequence()= coroutineScope {
-        //TODO: Show the sequence of colors to the user
-        Log.d("Secuencia","${Data.sequence}")
-       launch {
-           for (i in Data.sequence) {
-               if (Data.numColors[i].equals(Colors.BLUE.color)) {
-                   Colors.BLUE.color.value = Color(255, 255, 255)
-               }
-               if (Data.numColors[i].equals(Colors.RED.color)) {
-                   Colors.RED.color.value = Color(255, 255, 255)
-               }
-               if (Data.numColors[i].equals(Colors.YELLOW.color)) {
-                   Colors.YELLOW.color.value = Color(255, 255, 255)
-               }
-               if (Data.numColors[i].equals(Colors.GREEN.color)) {
-                   Colors.GREEN.color.value = Color(255, 255, 255)
-               }
+    fun showSequenceRun(time:Long) = runBlocking {
+        showSequence(time)
+    }
+    fun showSequence(time: Long) {
+        Log.d(TAG_LOG, "Mostramos la secuencia")
+        viewModelScope.launch {
+            for (i in Data.sequence) {
+                Log.d(TAG_LOG, "Mostramos el color $i")
+                Data.colorPath= Data.colors[i].value
+                Data.numColors[i].color.value= darkestColor(Data.colorPath,0.5f)
 
-               delay(1000L)
-               
-           }
-       }
-
+                delay(time)
+                Data.numColors[i].color.value= Data.colorPath
+                delay(time)
+            }
+            Data.state = State.WAITING
+            Log.d(TAG_LOG, Data.state.toString())
+        }
+        Log.d(TAG_LOG, Data.state.toString())
     }
 
     /**
-     * Increase the sequence of the user
-     * @param color Color introduced by the user
+     * Darkest the color of the button
      */
-    fun increaseUserSequence(color: Int) {
-        Data.state= State.INPUT
+    fun darkestColor(color: Color,factor: Float): Color {
+        val r = (color.red * (1 - factor)).coerceIn(0f, 1f)
+        val g = (color.green * (1 - factor)).coerceIn(0f, 1f)
+        val b = (color.blue * (1 - factor)).coerceIn(0f, 1f)
+        return Color(r, g, b, color.alpha)
+    }
+
+    /**
+     * Increment the user sequence
+     */
+    fun incrementUserSequence(color: Int) {
+        Data.state = State.INPUT
+        Log.d(TAG_LOG,Data.state.toString())
         Data.userSequence.add(color)
+        Data.state=State.WAITING
+        Log.d(TAG_LOG, Data.state.toString())
     }
+
 
     /**
      * Check if the user sequence is correct
-     * @return true if the user sequence is correct, false if not
      */
-
-    fun checkUserSequence(): Boolean {
+    fun checkUserSequence() {
         Data.state= State.CHECKING
-        var correct: Boolean = true
-        for (i in 0..Data.userSequence.size - 1) {
-            if (Data.userSequence[i] != Data.sequence[i]) {
-                correct = false
-                break
+        Log.d(TAG_LOG, Data.state.toString())
+        if (Data.userSequence == Data.sequence) {
+            Data.round.value++
+            if (Data.round.value > Data.record.value) {
+                Data.record.value = Data.round.value
             }
-        }
-        return correct
-    }
-
-
-    //////////////////////////////////////////
-
-    fun changeStatus(){
-        if (_statusC.value.equals("START")){
-            _statusC.value = "RESET"
-
-            increaseSequence()
-
-
+            Data.userSequence.clear()
+            if(Data.round.value>12){
+                incrementSequence(100L)
+            }else if(Data.round.value>6 && Data.round.value<=9){
+                incrementSequence(200L)
+            }else if(Data.round.value>3 && Data.round.value<=6){
+                incrementSequence(300L)
+            }else{
+                incrementSequence(500L)
+            }
         } else {
-            _statusC.value = "START"
-
+            Log.d(TAG_LOG, "La secuencia es incorrecta")
+            Data.state = State.FINISH
+            Data.playStatus.value="START"
             restartGame()
-
+            Log.d(TAG_LOG, Data.state.toString())
         }
     }
 
-
-    fun incrementN(){
-        _round.value++
+    /**
+     * Get the round
+     * @return the round
+     */
+    fun getRound(): Int {
+        return Data.round.value
     }
 
-    fun getRound():Int{
-        return _round.value
+    /**
+     * Get the record
+     */
+    fun getRecord(): Int {
+        return Data.record.value
     }
 
-
-    fun getStatus():String{
-        return _statusC.value
+    /**
+     * Get the status of the game
+     */
+    fun getStatus(): String {
+        return Data.playStatus.value
     }
 
-    @Composable
-    fun UInterface(myViewModel: MyViewModel, modifier: Modifier = Modifier) {
-
-        var myOwnColor= Color(220,122,255)
-        Column {
-            Column {
-                round(myViewModel,modifier = modifier)
-            }
-
-            colorButtons()
-
-            Row {
-                startButton(myViewModel, myColor = myOwnColor, modifier = modifier)
-                roundButton(myViewModel, myColor = myOwnColor, modifier = modifier)
-            }
-        }
-    }
-
-    // APP's Preview
-    @Preview(showBackground = true)
-    @Composable
-    fun Preview() {
-        SimonDiceTheme {
-            UInterface(myViewModel=MyViewModel() )
-        }
-    }
-
-    @Composable()
-    fun round(myViewModel: MyViewModel,modifier: Modifier) {
-        Text(
-            text = "Ronda:",
-            modifier = modifier
-                .padding(250.dp,0.dp,0.dp,0.dp),
-            textAlign = TextAlign.Right,
-            fontSize = 40.sp,
-            color = Color.White
-        )
-
-        if (myViewModel.getRound() > 10) {
-            Text(
-                text = "${myViewModel.getRound()}",
-                fontSize = 60.sp,
-                modifier = Modifier.padding(300.dp,0.dp,0.dp,0.dp),
-                color = Color.White
-            )
+    /**
+     * Change the status of the game
+     */
+    fun changeStatus() {
+        if (Data.playStatus.value == "START") {
+            Data.playStatus.value= "RESTART"
+            //Execute the first round
+            Data.round.value++
+            incrementSequence(500L)
         } else {
-            Text(
-                text = "${myViewModel.getRound()}",
-                fontSize = 40.sp,
-                modifier = Modifier.padding(300.dp,0.dp,0.dp,0.dp),
-                color = Color.White
-            )
-        }
-    }
-    @Composable
-    fun startButton(myViewModel: MyViewModel,myColor: Color,modifier: Modifier){
-        Button(
-            onClick = {
-                myViewModel.changeStatus()
-            },
-            modifier= modifier
-                .height(90.dp)
-                .width(160.dp)
-                .padding(35.dp,0.dp,0.dp,0.dp),
-            colors= ButtonDefaults.buttonColors(myColor)
-        ) {
-            Text(
-                text = myViewModel.getStatus(),
-                textAlign = TextAlign.Center,
-                fontSize = 20.sp,
-                color = Color.White
-            )
-        }
-    }
-    @Composable
-    fun roundButton(myViewModel: MyViewModel,myColor: Color,modifier: Modifier){
-        Button(
-            onClick = {
-                myViewModel.incrementN()
-                Log.d("Funciones","Click!!!!!")
-            },
-            modifier= Modifier
-                .height(90.dp)
-                .width(160.dp)
-                .padding(70.dp, 0.dp, 0.dp, 0.dp),
-            colors= ButtonDefaults.buttonColors(myColor)
-        ) {
-            Image(
-                painter = painterResource(R.drawable.arrow),
-                contentDescription = "imagen",
-                modifier = modifier
-            )
+            Data.playStatus.value= "START"
+            restartGame()
         }
     }
 
-    @Composable
-    fun colorButtons(){
-        Row (
-            modifier = Modifier.padding(0.dp,100.dp,0.dp,0.dp)){
-            configColorButton(color = Color.Cyan)
-            configColorButton(color = Color.Green)
-        }
-        Row (){
-            configColorButton(color = Color.Red)
-            configColorButton(color = Color.Yellow)
-        }
-    }
-
-    @Composable
-    fun configColorButton(color: Color){
-        Column {
-            Button(
-                shape = RectangleShape,
-                onClick = {
-                    /*TODO*/
-                },
-                modifier = Modifier
-                    .height(200.dp)
-                    .width(200.dp)
-                    .padding(50.dp, 50.dp)
-                ,
-                colors = ButtonDefaults.buttonColors(color)
-            ){
-
-            }
-        }
-    }
 }

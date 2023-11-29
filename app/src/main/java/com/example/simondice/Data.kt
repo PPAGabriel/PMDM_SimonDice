@@ -14,13 +14,19 @@ import androidx.compose.ui.graphics.Color
  */
 
 object Data {
-    var round: Int = 0
+    var round = mutableStateOf(0)
+    var playStatus= mutableStateOf("START")
     var sequence = mutableListOf<Int>()
     var userSequence = mutableListOf<Int>()
-    var numColors= listOf(Colors.BLUE.color, Colors.GREEN.color, Colors.RED.color, Colors.YELLOW.color)
-    var record: Int = 0
+    var colors= listOf(
+        Colors.RED.color,
+        Colors.BLUE.color,
+        Colors.YELLOW.color,
+        Colors.GREEN.color)
+    var record= mutableStateOf(0)
     var state: State = State.START
-    
+    var numColors=Colors.values()
+    var colorPath: Color= Color.White
 }
 
 /**
@@ -33,8 +39,6 @@ enum class State {
     WAITING,
     INPUT,
     CHECKING,
-    PLAYING,
-    WIN,
     FINISH
 }
 
@@ -45,6 +49,6 @@ enum class State {
 enum class Colors(var color: MutableState<Color>) {
     RED(mutableStateOf(Color.Red)),
     BLUE(mutableStateOf(Color.Blue)),
-    GREEN(mutableStateOf(Color.Green)),
-    YELLOW(mutableStateOf(Color.Yellow))
+    YELLOW(mutableStateOf(Color.Yellow)),
+    GREEN(mutableStateOf(Color.Green))
 }
