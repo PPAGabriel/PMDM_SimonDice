@@ -48,7 +48,7 @@ enum class State {
 
 enum class Colors(var color: MutableState<Color>) {
     RED(mutableStateOf(Color.Red)),
-    BLUE(mutableStateOf(Color.Blue)),
+    BLUE(mutableStateOf(Color(70, 97, 231, 255))),
     YELLOW(mutableStateOf(Color.Yellow)),
     GREEN(mutableStateOf(Color.Green))
 }

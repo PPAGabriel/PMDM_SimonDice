@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SimonDiceTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = Color(100,0,20)) {
+                Surface(modifier = Modifier.fillMaxSize(), color = Color(226, 162, 240, 255)) {
 
                     UInterface(mVM)
 

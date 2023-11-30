@@ -152,9 +152,11 @@ class MyViewModel():ViewModel() {
             Data.userSequence.clear()
             if(Data.round.value>9){
                 incrementSequence(100L)
-            }else if(Data.round.value>6 && Data.round.value<=9){
+            }else if(Data.round.value>7 && Data.round.value<=9){
+                incrementSequence(150L)
+            } else if(Data.round.value>5 && Data.round.value<=7){
                 incrementSequence(200L)
-            }else if(Data.round.value>3 && Data.round.value<=6){
+            }else if(Data.round.value>3 && Data.round.value<=5){
                 incrementSequence(300L)
             }else{
                 incrementSequence(500L)
