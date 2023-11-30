@@ -46,6 +46,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Preview() {
     SimonDiceTheme {
-        UInterface(mVM=MyViewModel() )
+        UInterface(mVM=MyViewModel())
     }
 }

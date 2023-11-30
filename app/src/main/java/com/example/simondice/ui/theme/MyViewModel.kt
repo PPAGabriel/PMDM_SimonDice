@@ -1,7 +1,10 @@
 package com.example.simondice.ui.theme
 
+import android.app.AlertDialog
+import android.content.Context
 import android.util.Log
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.simondice.Data
@@ -9,6 +12,9 @@ import com.example.simondice.State
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 
 /**
  * ViewModel of the game
@@ -109,10 +115,21 @@ class MyViewModel():ViewModel() {
     /**
      * Increment the user sequence
      */
+    fun incrementUserSequenceRun(numColor: Int) = runBlocking {
+        incrementUserSequence(numColor)
+    }
     fun incrementUserSequence(color: Int) {
         Data.state = State.INPUT
         Log.d(TAG_LOG,Data.state.toString())
         Data.userSequence.add(color)
+
+        viewModelScope.launch {
+            Data.colorPath=Data.numColors[color].color.value
+            Data.numColors[color].color.value= Color.White
+            delay(150L)
+            Data.numColors[color].color.value= Data.colorPath
+        }
+
         Data.state=State.WAITING
         Log.d(TAG_LOG, Data.state.toString())
     }
@@ -130,7 +147,7 @@ class MyViewModel():ViewModel() {
                 Data.record.value = Data.round.value
             }
             Data.userSequence.clear()
-            if(Data.round.value>12){
+            if(Data.round.value>9){
                 incrementSequence(100L)
             }else if(Data.round.value>6 && Data.round.value<=9){
                 incrementSequence(200L)

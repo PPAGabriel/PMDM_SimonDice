@@ -3,6 +3,7 @@
 package com.example.simondice.ui.theme
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -162,13 +163,14 @@ fun designColorButton(color: MutableState<Color>, mVM: MyViewModel){
             shape = RectangleShape,
             onClick = {
                 if (Data.state !=State.SEQUENCE){
-                    mVM.incrementUserSequence(Data.colors.indexOf(color))
+                    mVM.incrementUserSequenceRun(Data.colors.indexOf(color))
                 }
             },
             modifier = Modifier
                 .height(200.dp)
                 .width(200.dp)
                 .padding(50.dp, 50.dp)
+                .border(2.dp, Color.Black)
             ,
             colors = ButtonDefaults.buttonColors(color.value)
         ){
