@@ -3,6 +3,7 @@ package com.example.simondice.ui.theme
 import android.app.AlertDialog
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
@@ -143,9 +144,11 @@ class MyViewModel():ViewModel() {
         Log.d(TAG_LOG, Data.state.toString())
         if (Data.userSequence == Data.sequence) {
             Data.round.value++
+
             if (Data.round.value > Data.record.value) {
                 Data.record.value = Data.round.value
             }
+
             Data.userSequence.clear()
             if(Data.round.value>9){
                 incrementSequence(100L)
@@ -159,6 +162,9 @@ class MyViewModel():ViewModel() {
         } else {
             Log.d(TAG_LOG, "La secuencia es incorrecta")
             Data.state = State.FINISH
+
+            Toast.makeText(ctxt,"G A M E   O V E R",Toast.LENGTH_SHORT).show()
+
             Data.playStatus.value="START"
             restartGame()
             Log.d(TAG_LOG, Data.state.toString())

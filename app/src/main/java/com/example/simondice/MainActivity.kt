@@ -16,7 +16,6 @@ import com.example.simondice.ui.theme.SimonDiceTheme
 /**
 *Videogame of Simon Dice
 **/
-
 class MainActivity : ComponentActivity() {
 
     // APP's Variables

@@ -2,6 +2,7 @@
 
 package com.example.simondice.ui.theme
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,21 +29,25 @@ import com.example.simondice.Colors
 import com.example.simondice.Data
 import com.example.simondice.R
 import com.example.simondice.State
-
 open class UI {
 }
+
+var ctxt: Context? = null
 
 @Composable
 fun UInterface(mVM: MyViewModel, modifier: Modifier = Modifier) {
 
     var myOwnColor= Color(220,122,255)
 
+    ctxt= LocalContext.current
+
     Column {
         Column {
             gameInfo(mVM,modifier = modifier)
         }
 
-        colorButtons(mVM)
+            colorButtons(mVM)
+
 
         Row {
             startButton(mVM, myColor = myOwnColor, modifier = modifier)
@@ -60,6 +66,7 @@ fun Preview() {
 }
 
 //APP's Functions
+
 @Composable()
 fun gameInfo(myViewModel: MyViewModel,modifier: Modifier) {
 
@@ -101,6 +108,7 @@ fun gameInfo(myViewModel: MyViewModel,modifier: Modifier) {
 
 @Composable
 fun startButton(myViewModel: MyViewModel,myColor: Color,modifier: Modifier){
+
     Button(
         onClick = {
             myViewModel.changeStatus()
@@ -162,7 +170,7 @@ fun designColorButton(color: MutableState<Color>, mVM: MyViewModel){
         Button(
             shape = RectangleShape,
             onClick = {
-                if (Data.state !=State.SEQUENCE){
+                if (Data.state !=State.SEQUENCE && Data.playStatus.value=="RESTART"){
                     mVM.incrementUserSequenceRun(Data.colors.indexOf(color))
                 }
             },
