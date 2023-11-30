@@ -96,7 +96,7 @@ fun gameInfo(myViewModel: MyViewModel,modifier: Modifier) {
             Text(
                 text = "Ronda: ${myViewModel.getRound()}",
                 modifier = modifier
-                    .padding(100.dp,40.dp,10.dp,0.dp),
+                    .padding(70.dp,40.dp,10.dp,0.dp),
                 fontSize = 40.sp,
                 color = Color.White
             )
