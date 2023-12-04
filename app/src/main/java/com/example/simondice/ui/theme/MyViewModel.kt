@@ -145,8 +145,8 @@ class MyViewModel():ViewModel() {
         if (Data.userSequence == Data.sequence) {
             Data.round.value++
 
-            if (Data.round.value > Data.record.value) {
-                Data.record.value = Data.round.value
+            if ((Data.round.value -1)> Data.record.value) {
+                Data.record.value = Data.round.value-1
             }
 
             Data.userSequence.clear()
