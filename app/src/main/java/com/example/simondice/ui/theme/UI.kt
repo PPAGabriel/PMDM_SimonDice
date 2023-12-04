@@ -131,10 +131,10 @@ fun startButton(myViewModel: MyViewModel,myColor: Color,modifier: Modifier){
 fun sendButton(myViewModel: MyViewModel,myColor: Color,modifier: Modifier){
     Button(
         onClick = {
-            if (myViewModel.getStatus()=="START"){
-                //Nothing changes
-            }else{
+            if (myViewModel.getStatus()!="START" && Data.state==State.WAITING){
                 myViewModel.checkUserSequence()
+            }else{
+                //Nothing to do
             }
         },
         modifier= Modifier
