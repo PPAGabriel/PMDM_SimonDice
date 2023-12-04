@@ -110,6 +110,7 @@ fun startButton(myViewModel: MyViewModel,myColor: Color,modifier: Modifier){
 
     Button(
         onClick = {
+
             myViewModel.changeStatus()
         },
         modifier= modifier

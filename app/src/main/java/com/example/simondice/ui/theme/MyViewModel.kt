@@ -205,8 +205,10 @@ class MyViewModel():ViewModel() {
             Data.round.value++
             incrementSequence(500L)
         } else {
-            Data.playStatus.value= "START"
-            restartGame()
+            if(Data.state!=State.SEQUENCE && Data.state!=State.INPUT){
+                Data.playStatus.value= "START"
+                restartGame()
+            }
         }
     }
 
