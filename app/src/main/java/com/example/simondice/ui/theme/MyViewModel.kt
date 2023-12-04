@@ -120,19 +120,20 @@ class MyViewModel():ViewModel() {
         incrementUserSequence(numColor)
     }
     fun incrementUserSequence(color: Int) {
-        Data.state = State.INPUT
-        Log.d(TAG_LOG,Data.state.toString())
+
         Data.userSequence.add(color)
 
         viewModelScope.launch {
+            Data.state = State.INPUT
+            Log.d(TAG_LOG,Data.state.toString())
             Data.colorPath=Data.numColors[color].color.value
             Data.numColors[color].color.value= Color.White
             delay(150L)
             Data.numColors[color].color.value= Data.colorPath
+            Data.state=State.WAITING
+            Log.d(TAG_LOG, Data.state.toString())
         }
 
-        Data.state=State.WAITING
-        Log.d(TAG_LOG, Data.state.toString())
     }
 
 

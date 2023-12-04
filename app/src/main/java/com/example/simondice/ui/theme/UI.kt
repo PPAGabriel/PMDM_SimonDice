@@ -170,7 +170,7 @@ fun designColorButton(color: MutableState<Color>, mVM: MyViewModel){
         Button(
             shape = RectangleShape,
             onClick = {
-                if (Data.state !=State.SEQUENCE && Data.playStatus.value=="RESTART"){
+                if (Data.state !=State.SEQUENCE && Data.playStatus.value=="RESTART" && Data.state!=State.INPUT){
                     mVM.incrementUserSequenceRun(Data.colors.indexOf(color))
                 }
             },
